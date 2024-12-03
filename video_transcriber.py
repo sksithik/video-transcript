@@ -1,7 +1,6 @@
 import os
 from moviepy import VideoFileClip, TextClip, CompositeVideoClip
-from speech_recognition import Recognizer, AudioFile
-from pydub import AudioSegment;
+import whisper
 
 
 def extract_audio_from_video(video_path, audio_path):
@@ -10,12 +9,13 @@ def extract_audio_from_video(video_path, audio_path):
     print(f"Audio extracted to {audio_path}")
 
 def transcribe_audio(audio_path):
-    recognizer = Recognizer()
-    with AudioFile(audio_path) as audio_file:
-        audio_data = recognizer.record(audio_file)
-        transcript = recognizer.recognize_google(audio_data)
-    print("Transcription completed.")
-    return transcript
+    model = whisper.load_model("base")
+    
+    print(f"Transcribing audio from {audio_path}...")
+    result = model.transcribe(audio_path)
+    
+    print("Transcription:")
+    print(result["text"])
 
 def add_text_to_video(video_path, output_path, text):
     video = VideoFileClip(video_path)
